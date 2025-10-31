@@ -39,7 +39,7 @@ if (! function_exists('file_force_contents')) {
 }
 
 if (! function_exists('get_client_to_aoc_website')) {
-    function get_client_to_aoc_website(string $url = null)
+    function get_client_to_aoc_website(?string $url = null)
     {
         if (! $url) {
             $url = 'https://adventofcode.com/';
