@@ -46,12 +46,9 @@ class Solution_01
     {
         $leftColumn = $rightColumn = [];
 
-        foreach (explode("\n", trim($this->input)) as $line) {
+        foreach (get_lines($this->input) as $line) {
             if (!$line) continue;
-
-            sscanf($line, '%d %d', $left, $right);
-            $leftColumn[] = $left;
-            $rightColumn[] = $right;
+            sscanf($line, '%d %d', $leftColumn[], $rightColumn[]);
         }
         return [$leftColumn, $rightColumn];
     }
