@@ -2,27 +2,32 @@
 
 namespace App\Solutions\Year_{{ $year }};
 
-class Solution_{{ $day }}
+use App\Solutions\AbstractSolution;
+
+class Solution_{{ $day }} extends AbstractSolution
 {
-
-    public string $input;
-
-    public function __construct()
+    public function __construct(bool $useExample = false)
     {
-        $this->input = load_input({{ $year }}, {{ $day }}, true);
+        parent::__construct({{ $year }}, {{ $day }}, $useExample);
     }
-    public function silver(string $data): string
+
+    protected function parseInput(): array
     {
+        // Parse and return structured data from $this->input
+        return $this->getLines();
+    }
+
+    public function silver(): int|string
+    {
+        // Solve part 1 using $this->parsedInput
         return 'todo';
     }
 
-    public function gold(string $data): string
+    public function gold(): int|string
     {
+        // Solve part 2 using $this->parsedInput
         return 'todo';
     }
 
-    private function readInput(): ?Object
-    {
-     return null;
-    }
+    // Add helper methods here
 }
