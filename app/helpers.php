@@ -3,7 +3,7 @@
 use GuzzleHttp\Client;
 
 if (!function_exists('instanciate_solution')) {
-    function instanciate_solution($year, $day)
+    function instanciate_solution($year, $day, $example)
     {
         $classname = sprintf('App\\Solutions\\Year_%s\\Solution_%s', $year, sprintf('%02d', $day));
 
@@ -11,7 +11,7 @@ if (!function_exists('instanciate_solution')) {
             return null;
         }
 
-        return new $classname();
+        return new $classname($example);
     }
 }
 
@@ -22,7 +22,6 @@ if (!function_exists('load_input')) {
         if (!file_exists($data_filename)) {
             return null;
         }
-
         return file_get_contents($data_filename);
     }
 }

@@ -2,27 +2,32 @@
 
 namespace App\Solutions\Year_2024;
 
-class Solution_03
+use App\Solutions\AbstractSolution;
+
+class Solution_03 extends AbstractSolution
 {
-
-    public string $input;
-
-    public function __construct()
+    public function __construct(bool $useExample = false)
     {
-        $this->input = load_input(2024, 03, true);
+        parent::__construct(2024, 03, $useExample);
     }
-    public function silver(string $data): string
+
+    protected function parseInput(): array
     {
+        // Parse and return structured data from $this->input
+        return $this->getLines();
+    }
+
+    public function silver(): int|string
+    {
+        // Solve part 1 using $this->parsedInput
         return 'todo';
     }
 
-    public function gold(string $data): string
+    public function gold(): int|string
     {
+        // Solve part 2 using $this->parsedInput
         return 'todo';
     }
 
-    private function readInput(): ?Object
-    {
-     return null;
-    }
+    // Add helper methods here
 }

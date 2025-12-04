@@ -19,27 +19,21 @@ class RunCommand extends Command
         $this->year = intval($this->argument('year'));
         $this->day = intval($this->argument('day'));
 
-        $instance = instanciate_solution($this->year, $this->day);
+        $instance = instanciate_solution($this->year, $this->day, $this->option('example'));
         if (! $instance) {
             $this->error('Solution not found');
 
             return;
         }
 
-        $data = load_input($this->year, $this->day, $this->option('example'));
-        if ($data == null) {
-            $this->error('Input file does not exist');
-
-            return;
-        }
 
         $time = microtime(true);
-        $silver = $instance->silver($data);
+        $silver = $instance->silver();
         $time = microtime(true) - $time;
         $this->info(sprintf('Silver (%.3fms): %s', $time * 1000, $silver));
 
         $time = microtime(true);
-        $gold = $instance->gold($data);
+        $gold = $instance->gold();
         $time = microtime(true) - $time;
         $this->info(sprintf('Gold (%.3fms): %s', $time * 1000, $gold));
     }
