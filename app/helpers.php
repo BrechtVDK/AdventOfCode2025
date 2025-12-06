@@ -119,7 +119,7 @@ if (!function_exists('update_env_session_cookie')) {
     }
 
     if (!function_exists('parse_coords')) {
-        function parse_coords(string $line, string $pattern = '/(-?\d+)/'):array
+        function parse_coords(string $line, string $pattern = '/(-?\d+)/'): array
         {
             preg_match_all($pattern, $line, $matches);
             return array_map('intval', $matches[1]);
@@ -139,12 +139,13 @@ if (!function_exists('update_env_session_cookie')) {
     }
 
     if (!function_exists('neighbors_8')) {
-        function neighbors_8(int $row, int $col): array
+        function neighbors_8(int $row, int $col, $maxRow, $maxCol): array
         {
             $neighbors = [];
             for ($dr = -1; $dr <= 1; $dr++) {
                 for ($dc = -1; $dc <= 1; $dc++) {
                     if ($dr === 0 && $dc === 0) continue;
+                    if ($row + $dr < 0 || $col + $dc < 0 || $row + $dr > $maxRow || $col + $dc > $maxCol) continue;
                     $neighbors[] = [$row + $dr, $col + $dc];
                 }
             }
