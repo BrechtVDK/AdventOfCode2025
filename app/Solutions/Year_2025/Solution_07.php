@@ -1,0 +1,98 @@
+<?php
+
+namespace App\Solutions\Year_2025;
+
+use App\Solutions\AbstractSolution;
+
+class Solution_07 extends AbstractSolution
+{
+    private array $startingPointsDone = [];
+    private array $startingPointsToDoStack = [];
+    private array $grid = [];
+    private const string SPLITTER = '^';
+    private const string BEAM = '|';
+
+    public function __construct(bool $useExample = false)
+    {
+        parent::__construct(2025, 07, $useExample);
+        $this->grid = $this->parsedInput;
+    }
+
+    protected function parseInput(): array
+    {
+        // Parse and return structured data from $this->input
+        return get_grid($this->input);
+    }
+
+    public function silver(): int|string
+    {
+
+        $startPoint = [0, array_search('S', $this->grid[0])];
+        $this->startingPointsToDoStack[] = $startPoint;
+        do {
+            $startPoint = array_shift($this->startingPointsToDoStack);
+            if (array_search($startPoint, $this->startingPointsDone)) {
+                continue;
+            }
+
+            $this->beam($startPoint);
+
+        } while (!empty($this->startingPointsToDoStack));
+        //$this->printGrid();
+        return $this->countSplits();
+    }
+
+    public function gold(): int|string
+    {
+        // Solve part 2 using $this->parsedInput
+        return 'todo';
+    }
+
+    private function printGrid(): void
+    {
+        $print = '';
+        foreach ($this->grid as $row) {
+            foreach ($row as $cell) {
+                $print .= str_pad($cell === self::SPLITTER ? 'i' : $cell, '4');
+            }
+            $print .= PHP_EOL;
+        }
+        ray()->text($print);
+    }
+
+    private function beam(array $startPoint): void
+    {
+        $col = $startPoint[1];
+        for ($row = $startPoint[0]; $row < count($this->grid); $row++) {
+            if ($this->grid[$row][$col] === self::SPLITTER) {
+                if ($col > 0) {
+                    $this->startingPointsToDoStack[] = [$row, $col - 1];
+                    $this->grid[$row][$col - 1] = self::BEAM;
+
+                }
+                if ($col < count($this->grid[$row]) - 1) {
+                    $this->startingPointsToDoStack[] = [$row, $col + 1];
+                    $this->grid[$row][$col + 1] = self::BEAM;
+                }
+
+                break;
+            } else {
+                $this->grid[$row][$col] = self::BEAM;
+            }
+        }
+        $this->startingPointsDone[] = $startPoint;
+    }
+
+    private function countSplits(): int
+    {
+        $splits = 0;
+        for ($row = 0; $row < count($this->grid); $row++) {
+            for ($col = 0; $col < count($this->grid[$row]); $col++) {
+                if ($this->grid[$row][$col] === self::SPLITTER && $this->grid[$row][$col - 1] === self::BEAM && $this->grid[$row][$col + 1] === self::BEAM && $this->grid[$row - 1][$col] === self::BEAM) {
+                    $splits++;
+                }
+            }
+        }
+        return $splits;
+    }
+}
