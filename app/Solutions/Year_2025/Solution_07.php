@@ -26,7 +26,6 @@ class Solution_07 extends AbstractSolution
 
     public function silver(): int|string
     {
-
         $startPoint = [0, array_search('S', $this->grid[0])];
         $this->startingPointsToDoStack[] = $startPoint;
         do {
@@ -35,7 +34,7 @@ class Solution_07 extends AbstractSolution
                 continue;
             }
 
-            $this->beam($startPoint);
+            $this->beamSilver($startPoint);
 
         } while (!empty($this->startingPointsToDoStack));
         //$this->printGrid();
@@ -44,8 +43,22 @@ class Solution_07 extends AbstractSolution
 
     public function gold(): int|string
     {
-        // Solve part 2 using $this->parsedInput
-        return 'todo';
+        $this->grid = $this->parseInput();
+        for ($row = 0; $row < count($this->grid); $row++) {
+            for ($col = 0; $col < count($this->grid[$row]); $col++) {
+                if ($this->grid[$row][$col] === '.') {
+                    $this->grid[$row][$col] = 0;
+                }
+            }
+        }
+
+        $startPoint = [0, array_search('S', $this->grid[0])];
+        $this->grid[0][$startPoint[1]] = 1;
+
+        $this->beamGold();
+
+        return array_sum($this->grid[count($this->grid) - 1]);
+
     }
 
     private function printGrid(): void
@@ -60,7 +73,24 @@ class Solution_07 extends AbstractSolution
         ray()->text($print);
     }
 
-    private function beam(array $startPoint): void
+    private function beamGold(): void
+    {
+        for ($row = 1; $row < count($this->grid); $row++) {
+            for ($col = 0; $col < count($this->grid[$row]); $col++) {
+                if ($this->grid[$row][$col] === self::SPLITTER) {
+                    $this->grid[$row][$col - 1] = $this->grid[$row][$col - 1] + $this->grid[$row - 1][$col];
+                    $this->grid[$row][$col + 1] = $this->grid[$row][$col + 1] + $this->grid[$row - 1][$col];
+                } elseif ($this->grid[$row - 1][$col] !== self::SPLITTER) {
+                    $this->grid[$row][$col] = $this->grid[$row][$col] + $this->grid[$row - 1][$col];
+                }
+            }
+        }
+
+
+    }
+
+    private
+    function beamSilver(array $startPoint): void
     {
         $col = $startPoint[1];
         for ($row = $startPoint[0]; $row < count($this->grid); $row++) {
@@ -83,7 +113,8 @@ class Solution_07 extends AbstractSolution
         $this->startingPointsDone[] = $startPoint;
     }
 
-    private function countSplits(): int
+    private
+    function countSplits(): int
     {
         $splits = 0;
         for ($row = 0; $row < count($this->grid); $row++) {
