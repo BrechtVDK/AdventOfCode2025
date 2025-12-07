@@ -78,10 +78,10 @@ class Solution_07 extends AbstractSolution
         for ($row = 1; $row < count($this->grid); $row++) {
             for ($col = 0; $col < count($this->grid[$row]); $col++) {
                 if ($this->grid[$row][$col] === self::SPLITTER) {
-                    $this->grid[$row][$col - 1] = $this->grid[$row][$col - 1] + $this->grid[$row - 1][$col];
-                    $this->grid[$row][$col + 1] = $this->grid[$row][$col + 1] + $this->grid[$row - 1][$col];
+                    $this->grid[$row][$col - 1] +=  $this->grid[$row - 1][$col];
+                    $this->grid[$row][$col + 1] +=   $this->grid[$row - 1][$col];
                 } elseif ($this->grid[$row - 1][$col] !== self::SPLITTER) {
-                    $this->grid[$row][$col] = $this->grid[$row][$col] + $this->grid[$row - 1][$col];
+                    $this->grid[$row][$col] +=  $this->grid[$row - 1][$col];
                 }
             }
         }
