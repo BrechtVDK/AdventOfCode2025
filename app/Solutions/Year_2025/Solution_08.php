@@ -27,16 +27,34 @@ class Solution_08 extends AbstractSolution
 
     public function silver(): int|string
     {
-        $this->connect();
+
+        for ($i = 0; $i < count($this->parsedInput); $i++) {
+            $this->circuits[$i] = [];
+        }
+
+        // ray($this->map);
+        //ray($this->circuits);
+        $loops = $this->useExample ? 10 : 1000;
+        for ($i = 0; $i <= $loops; $i++) {
+            $points = explode('-', array_key_first($this->map));
+            array_shift($this->map);
+            $this->connect($points[0], $points[1]);
+        }
+        $this->reduceCircuits();
+
 
         uasort($this->circuits, function ($a, $b) {
             return count($b) <=> count($a);
         });
-        $this->circuits = array_values($this->circuits);
-        ray($this->circuits);
 
+        $total = 1;
+        $i = 0;
+        foreach ($this->circuits as $circuit) {
+            $total *= count($circuit) + 1;
+            if (++$i === 3) break;
+        }
 
-        return count($this->circuits[0]) * count($this->circuits[1]) * count($this->circuits[2]);
+        return $total;
 
     }
 
@@ -71,94 +89,39 @@ class Solution_08 extends AbstractSolution
 
     }
 
-    private function connect(): void
+    private function connect($point1, $point2): void
     {
-        $maxLoops = $this->useExample ? 10 : 1000;
-        $loop = 0;
-        foreach ($this->map as $junctionBoxes => $distance) {
-            $loop++;
-            if ($loop > $maxLoops) break;
+        $this->circuits[$point1][] = $point2;
+        $this->circuits[$point2][] = $point1;
+    }
 
-            $flag = false;
-            $junctionBoxArray = $this->splitInArray($junctionBoxes);
-          //  ray($this->circuits);
-           // ray($junctionBoxArray);
-            if ($this->areInSameCircuit($junctionBoxArray)) {
-                continue;
-            };
-            if ($circuits = $this->areBothInDifferentCircuit($junctionBoxArray)) {
-                $this->circuits[$circuits[0]] = array_merge($this->circuits[$circuits[0]], $this->circuits[$circuits[1]]);
-                unset($this->circuits[$circuits[1]]);
-                $this->circuits = array_values($this->circuits);
-                continue;
-            }
-            for ($i = 0; $i < 2; $i++) {
-                $circuit = $this->alreadyInCircuit($junctionBoxArray[$i]);
-                if ($circuit !== false) {
-                    $this->circuits[$circuit][] = $junctionBoxArray[$i === 0 ? 1 : 0];
-                    $flag = true;
-                    break;
+    private function reduceCircuits(): void
+    {
+        $count = count($this->circuits);
+        foreach ($this->circuits as $key => $circuit) {
+            $common = [];
+            $common[] = $key;
+            for ($j = 0; $j < $count; $j++) {
+                if ($key === $j) continue;
+                if (in_array($key, $this->circuits[$j])) {
+                    $common[] = $j;
                 }
             }
 
-            if (!$flag) {
-                $this->circuits[] = $junctionBoxArray;
-            }
-
-        }
-
-    }
-
-    private function splitInArray($string): array
-    {
-        return explode('-', $string);
-
-    }
-
-    private function alreadyInCircuit(mixed $junctionBox): bool|int
-    {
-        for ($i = 0; $i < count($this->circuits); $i++) {
-            if (in_array($junctionBox, $this->circuits[$i])) {
-                return $i;
-            }
-        }
-        return false;
-
-    }
-
-    private function areInSameCircuit(array $junctionBoxArray): bool
-    {
-        return array_any($this->circuits, function ($circuit) use ($junctionBoxArray) {
-            return array_all($junctionBoxArray, function ($junctionBox) use ($circuit) {
-                return array_search($junctionBox, $circuit);
-            });
-        });
-    }
-
-    private
-    function areBothInDifferentCircuit(array $junctionBoxArray): bool|array
-    {
-        $circuit1 = -1;
-        $circuit2 = -1;
-        for ($i = 0; $i < count($this->circuits); $i++) {
-            if (in_array($junctionBoxArray[0], $this->circuits[$i])) {
-                $circuit1 = $i;
-                break;
-            }
-        }
-        if ($circuit1 !== -1) {
-            for ($i = 0; $i < count($this->circuits); $i++) {
-                if (in_array($junctionBoxArray[1], $this->circuits[$i])) {
-                    $circuit2 = $i;
-                    return [$circuit1, $circuit2];
+            $longest = -1;
+            $longestC = -1;
+            foreach ($common as $c) {
+                $len = count($this->circuits[$c]);
+                if ($len > $longest) {
+                    $longest = $len;
+                    $longestC = $c;
                 }
             }
-        } else {
-            return false;
+            foreach ($common as $c) {
+                if ($c === $longestC) continue;
+                $this->circuits[$c] = [];
+            }
         }
-
-        return false;
-
     }
 
 
